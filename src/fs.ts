@@ -39,6 +39,15 @@ export function findClosestPackageJson(cwd: string): string | null {
   }
 }
 
+/**
+ * Returns `ctx` with `cwd` pointed at the closest package root, if any.
+ */
+export function withPackageRoot(ctx?: RunnerContext): RunnerContext {
+  const cwd = ctx?.cwd ?? process.cwd()
+  const pkg = findClosestPackageJson(cwd)
+  return { ...ctx, cwd: pkg ? dirname(pkg) : cwd }
+}
+
 export function getPackageJSON(ctx?: RunnerContext): any {
   const cwd = ctx?.cwd ?? process.cwd()
   const path = resolve(cwd, 'package.json')

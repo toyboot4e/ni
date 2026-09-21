@@ -1,6 +1,6 @@
 import type { RunnerContext } from './runner'
 import fs from 'node:fs'
-import { resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import process from 'node:process'
 import stripJsonComments from 'strip-json-comments'
 
@@ -23,6 +23,19 @@ function parsePackageJSON(raw: string): any {
     catch {
       throw e
     }
+  }
+}
+
+export function findClosestPackageJson(cwd: string): string | null {
+  let dir = resolve(cwd)
+  while (true) {
+    const filePath = join(dir, 'package.json')
+    if (fs.existsSync(filePath))
+      return filePath
+    const parent = dirname(dir)
+    if (parent === dir)
+      return null
+    dir = parent
   }
 }
 
